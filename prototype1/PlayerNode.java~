@@ -1,0 +1,73 @@
+public class PlayerNode extends Node {
+	int playerNum;
+	public PlayerNode () {
+		super();
+	}
+	public PlayerNode ( int col, int row, int playerNum ) {
+		super ( col, row );
+		this.playerNum = playerNum;
+	}
+	@Override
+	public void print () {
+		super.print();
+		System.out.println ( "Player Number: " + playerNum );
+	}
+	
+	public Node jump (Node oldPosition) {
+		int oldRow = oldPosition.row;
+		int oldCol = oldPosition.col;
+		Node result = new Node ( this.col, this.row );
+		if ( oldRow < this.row ) result.row += 1;
+		else if ( oldRow > this.row ) result.row -= 1;
+		else if ( oldCol < this.col ) result.col += 1;
+		else if ( oldCol > this.col ) result.col -= 1;
+		return result;
+	}
+	
+	public Node jumpLeft (Node oldPosition) {
+		int oldRow = oldPosition.row;
+		int oldCol = oldPosition.col;
+		Node result = new Node ( this.col, this.row );
+		if ( oldRow != this.row ) result.col -= 1;
+		else if ( oldCol != this.col ) result.row -= 1;
+		return result;
+	}
+	
+	public Node jumpRight (Node oldPosition) {
+		int oldRow = oldPosition.row;
+		int oldCol = oldPosition.col;
+		Node result = new Node ( this.col, this.row );
+		if ( oldRow != this.row ) result.col += 1;
+		else if ( oldCol != this.col ) result.row += 1;
+		return result;
+	}
+	/*
+	public boolean inBetweenWall_Jump ( Node previousNode, Map<WallNode, WallNode> walls ) {
+		WallNode temp = new WallNode();
+		// Have moved up/down
+		if ( previousNode.row != this.row ) {
+			temp.orientation = 'h';
+			temp.row = Math.max ( previousNode.row, this.row ) - 1;
+			temp.col = this.col;
+		}
+		// Have moved left/right
+		else if ( previousNode.col != this.col ) {
+			temp.orientation = 'v';
+			temp.col = Math.max ( previousNode.col, this.col ) - 1;
+			temp.row = this.row;
+		}
+		return walls.containsKey ( temp );
+	}
+	*/
+	@Override
+	public boolean equals( Object obj ) {
+		if ( ! (obj instanceof PlayerNode) )
+			return false;
+		PlayerNode that = (PlayerNode)obj;
+		return (this.col == that.col) && (this.row == that.row) && (this.playerNum == that.playerNum);
+	}
+	@Override
+	public int hashCode() {
+		return super.hashCode()*playerNum;
+	}
+}
