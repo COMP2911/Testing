@@ -1,0 +1,168 @@
+[Box: ::Default - ::<<Unknown>>::Comparable]
+X=635
+Y=685
+
+[Box: ::Default - ::Default::AbstractMove]
+X=934
+Y=40
+
+[Box: ::Default - ::Default::AIPlayer]
+X=1754
+Y=40
+
+[Box: ::Default - ::Default::AllMoves]
+X=635
+Y=343
+
+[Box: ::Default - ::Default::AStarNode]
+X=20
+Y=343
+
+[Box: ::Default - ::Default::AStarPathfinding]
+X=225
+Y=685
+
+[Box: ::Default - ::Default::Board]
+X=430
+Y=685
+
+[Box: ::Default - ::Default::Display]
+X=1549
+Y=40
+
+[Box: ::Default - ::Default::Game]
+X=20
+Y=685
+
+[Box: ::Default - ::Default::GlobalConstants]
+X=1344
+Y=40
+
+[Box: ::Default - ::Default::Move]
+X=840
+Y=343
+
+[Box: ::Default - ::Default::PlayerMove]
+X=1250
+Y=343
+
+[Box: ::Default - ::Default::PlayerTile]
+X=225
+Y=343
+
+[Box: ::Default - ::Default::ProvidedTests]
+X=1045
+Y=685
+
+[Box: ::Default - ::Default::Quoridor]
+X=840
+Y=685
+
+[Box: ::Default - ::Default::Tile]
+X=225
+Y=40
+
+[Box: ::Default - ::Default::Validator]
+X=1139
+Y=40
+
+[Box: ::Default - ::Default::WallMove]
+X=1045
+Y=343
+
+[Box: ::Default - ::Default::WallTile]
+X=430
+Y=343
+
+[Diagram: ::Default]
+OffsetX=0
+OffsetY=0
+Visibility=0
+ShowAssoc=1
+
+[Box: ::quoridor - ::<<Unknown>>::Comparable]
+X=635
+Y=1555
+
+[Box: ::quoridor - ::quoridor::AbstractMove]
+X=556
+Y=40
+
+[Box: ::quoridor - ::quoridor::AIPlayer]
+X=1728
+Y=40
+
+[Box: ::quoridor - ::quoridor::AITest]
+X=1295
+Y=40
+
+[Box: ::quoridor - ::quoridor::AllMoves]
+X=665
+Y=343
+
+[Box: ::quoridor - ::quoridor::AStarNode]
+X=403
+Y=1226
+
+[Box: ::quoridor - ::quoridor::AStarPathfinding]
+X=128
+Y=581
+
+[Box: ::quoridor - ::quoridor::Board]
+X=1583
+Y=581
+
+[Box: ::quoridor - ::quoridor::Display]
+X=225
+Y=1555
+
+[Box: ::quoridor - ::quoridor::Game]
+X=1295
+Y=343
+
+[Box: ::quoridor - ::quoridor::Globals]
+X=20
+Y=1226
+
+[Box: ::quoridor - ::quoridor::Move]
+X=783
+Y=581
+
+[Box: ::quoridor - ::quoridor::PlayerMove]
+X=1090
+Y=343
+
+[Box: ::quoridor - ::quoridor::PlayerTile]
+X=835
+Y=1226
+
+[Box: ::quoridor - ::quoridor::ProvidedTests]
+X=430
+Y=1555
+
+[Box: ::quoridor - ::quoridor::Quoridor]
+X=20
+Y=1555
+
+[Box: ::quoridor - ::quoridor::Tile]
+X=592
+Y=936
+
+[Box: ::quoridor - ::quoridor::Validator]
+X=2168
+Y=40
+
+[Box: ::quoridor - ::quoridor::WallMove]
+X=20
+Y=343
+
+[Box: ::quoridor - ::quoridor::WallTile]
+X=608
+Y=1226
+
+[Diagram: ::quoridor]
+OffsetX=372
+OffsetY=0
+Visibility=0
+ShowAssoc=1
+
