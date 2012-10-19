@@ -3,14 +3,29 @@ package quoridor;
 import java.util.ArrayList;
 
 public class AIPlayer {
-	protected Integer minMaxDepth;
-	protected Tile bestMove;
-	protected Board boardState;
+	private Integer minMaxDepth;
+	private Tile bestMove;
+	private Board boardState;
 	
+	/**
+	 * Constructor of AI Player to initialise the depth for MinMax algorithm 
+	 * @param depth
+	 */
 	public AIPlayer ( Integer depth ) {
 		this.minMaxDepth = depth;
 	}
 	
+	/**
+	 * MinMax algorithm with alpha beta pruning
+	 * @param depth
+	 * 	Current depth of the MinMax
+	 * @param alpha
+	 * 	Lower bound
+	 * @param beta
+	 * 	Upper bound
+	 * @return
+	 * 	Cost of current state
+	 */
 	protected Double runAlphaBeta ( int depth, double alpha, double beta ) {
 		if ( depth == this.minMaxDepth || boardState.gameOver() ) {
 			return getCost( boardState );
@@ -70,7 +85,18 @@ public class AIPlayer {
 			return beta;
 		}
 	}
-	
+
+	/**
+	 * NegaMax algorithm a variant of MinMax algorithm with Alpha Beta Pruning
+	 * @param depth
+	 * 	Current depth of the MinMax
+	 * @param alpha
+	 * 	Lower bound
+	 * @param beta
+	 * 	Upper bound
+	 * @return
+	 * 	Cost of current state
+	 */
 	protected Double runNegaMax ( int depth, double alpha, double beta ) {
 		PlayerTile currPlayer = boardState.getCurrentPlayer();
 		
@@ -104,7 +130,14 @@ public class AIPlayer {
 	}
 	
 	
-	public Tile doBestMove ( Board boardState ) {
+	/**
+	 * Get the best move for AI (NegaMax)
+	 * @param boardState
+	 * 	Current board state
+	 * @return
+	 * 	Best move
+	 */
+	public Tile getBestMove ( Board boardState ) {
 		double alpha = Double.NEGATIVE_INFINITY;
 		double beta = Double.POSITIVE_INFINITY;
 		this.boardState = boardState;
@@ -112,7 +145,14 @@ public class AIPlayer {
 		return bestMove;
 	}
 
-	public Tile doBestMove2 ( Board boardState ) {
+	/**
+	 * Get the best move for AI (AlphaBeta)
+	 * @param boardState
+	 * 	Current board state
+	 * @return
+	 * 	Best move
+	 */
+	public Tile getBestMove2 ( Board boardState ) {
 		double alpha = Double.NEGATIVE_INFINITY;
 		double beta = Double.POSITIVE_INFINITY;
 		this.boardState = boardState;
@@ -120,6 +160,14 @@ public class AIPlayer {
 		return bestMove;
 	}
 	
+	/**
+	 * Generate all possible player and wall moves for the current player.
+	 * Wall moves are only generated if the player has walls left to use and the other player has reached the 3rd row.
+	 * @param boardState
+	 * 	Current board state
+	 * @return
+	 * 	All possible moves
+	 */
 	protected ArrayList<Tile> generateAllMoves ( Board boardState ) {
 		ArrayList<Tile> allMoves = new ArrayList<Tile>();
 	// Generate Player Moves	
@@ -133,6 +181,15 @@ public class AIPlayer {
 		return allMoves;
 	}
 	
+	/**
+	 * Calculate the heuristic cost of the current state.
+	 * The difference between current and other players' length to goal. 
+	 * The difference between current and other players' walls left.
+	 * @param boardState
+	 * 	Current board state
+	 * @return
+	 * 	Heuristic cost of current state
+	 */
 	protected Double getCost ( Board boardState ) {
 		AStarPathfinding AStar = new  AStarPathfinding();
 		int currPlayerLength  = AStar.movesLength ( boardState.getCurrentPlayer(),  boardState.getCurrentPlayer().getGoal(), boardState.getWalls() );

@@ -11,6 +11,9 @@ public class Board {
 	private WallTile[][] walls;
 	private Integer currentPlayer;
 	
+	/**
+	 * Constructor to initialise the starting positions of black and white players, walls and current player
+	 */
 	public Board () {
 		blackPlayer = new PlayerTile ( bpX, bpY, 1 );
 		whitePlayer = new PlayerTile ( wpX, wpY, 2 );
@@ -19,10 +22,20 @@ public class Board {
 		currentPlayer = 1;
 	}
 	
+	/**
+	 * Check if the game is over
+	 * @return
+	 * 	Whether game is over
+	 */
 	public boolean gameOver () {
 		return (blackPlayer.hasWon() || whitePlayer.hasWon());
 	}
 	
+	/**
+	 * Winner of game
+	 * @return
+	 * 	Game winner in string
+	 */
 	public String getWinner () {
 		if ( blackPlayer.hasWon() )
 			return blackPlayer.toString();
@@ -31,6 +44,9 @@ public class Board {
 		return null;
 	}
 	
+	/**
+	 * Initialise the walls
+	 */
 	protected void initWalls () {
 		for ( int a = 0; a < Globals.MAX_ROW; ++a ) {
 			for ( int b = 0; b < Globals.MAX_COL; ++b ) {
@@ -39,6 +55,9 @@ public class Board {
 		}
 	}
 	
+	/**
+	 * Clear all walls
+	 */
 	protected void clearWalls () {
 		for ( int a = 0; a < Globals.MAX_ROW; ++a ) {
 			for ( int b = 0; b < Globals.MAX_COL; ++b ) {
@@ -48,30 +67,63 @@ public class Board {
 		}
 	}
 	
+	/**
+	 * Get walls
+	 * @return
+	 * 	Walls
+	 */
 	public WallTile[][] getWalls() {
 		return walls;
 	}
 	
+	/**
+	 * Get black player
+	 * @return
+	 * 	Black player
+	 */
 	public PlayerTile getBlackPlayer() {
 		return blackPlayer;
 	}
 	
+	/**
+	 * Get white player
+	 * @return
+	 * 	White player
+	 */
 	public PlayerTile getWhitePlayer() {
 		return whitePlayer;
 	}
 	
+	/**
+	 * Get current player
+	 * @return
+	 * 	Current player
+	 */
 	public PlayerTile getCurrentPlayer() {
 		return (blackPlayer.getPlayerNum() == currentPlayer) ? blackPlayer : whitePlayer;
 	}
 	
+	/**
+	 * Get other player
+	 * @return
+	 * 	Other player
+	 */
 	public PlayerTile getOtherPlayer() {
 		return (blackPlayer.getPlayerNum() == currentPlayer) ? whitePlayer : blackPlayer;
 	}
 	
+	/**
+	 * Switch current player 
+	 */
 	public void switchCurrentPlayer () {
 		currentPlayer = ((currentPlayer == 1) ? 2 : 1);
 	}
 	
+	/**
+	 * Get move generation
+	 * @return
+	 * 	Move generation
+	 */
 	public Move getMoveGen () {
 		return new AllMoves(this);
 	}

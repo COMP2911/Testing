@@ -2,13 +2,18 @@ package quoridor;
 
 
 public class WallTile extends Tile {
-	protected boolean horizontal;
-	protected boolean vertical;
+	private boolean horizontal;
+	private boolean vertical;
 	
-	public WallTile () {
-		super();
-		//orientation = 'v';
-	}
+	/**
+	 * Constructor to set position of tile and orientation of tile
+	 * @param col
+	 * 	Column of tile
+	 * @param row
+	 * 	Row of tile
+	 * @param orientation
+	 * 	Horizontal or Vertical
+	 */
 	public WallTile ( int col, int row, Character orientation ) {
 		super(col, row);
 		if (orientation == 'v' || orientation == 'V' )
@@ -20,10 +25,20 @@ public class WallTile extends Tile {
 			horizontal = false;
 		}
 	}
+	/**
+	 * Variant constructor to set position with Tile instead
+	 * @param i
+	 * 	Tile's position
+	 * @param orientation
+	 * 	Horizontal or Vertical
+	 */
 	public WallTile ( Tile i, Character orientation ) {
 		this (i.getCol(), i.getRow(), orientation);
 	}
 	
+	/* (non-Javadoc)
+	 * @see quoridor.Tile#print()
+	 */
 	public void print () {
 		System.out.print ("C1(X): "  + this.col);
 		System.out.print ("\tR1(Y): "  + this.row);
@@ -33,27 +48,53 @@ public class WallTile extends Tile {
 		System.out.println ("\tHorizontal: "  + this.horizontal);
 	}
 	
+	/**
+	 * Check if tile has a vertical wall
+	 * @return
+	 * 	Whether there's a vertical wall
+	 */
 	public boolean hasVertical () {
 		return vertical;
 	}
 	
+	/**
+	 * Check if tile has a horizontal wall
+	 * @return
+	 * 	Whether there's a horizontal wall
+	 */
 	public boolean hasHorizontal () {
 		return horizontal;
 	}
 	
+	/**
+	 * Add/Remove vertical wall
+	 * @param value
+	 * 	Add is true while Remove is false
+	 */
 	public void setVertical ( boolean value ) {
 		vertical = value;
 	}
 	
+	/**
+	 * Add/Remove horizontal wall
+	 * @param value
+	 * 	Add is true while Remove is false
+	 */
 	public void setHorizontal ( boolean value ) {
 		horizontal = value;
 	}
 
+	/* (non-Javadoc)
+	 * @see quoridor.Tile#inBoard()
+	 */
 	@Override
 	public boolean inBoard () {
 		return (this.row < (Globals.MAX_ROW-1) && this.row >= 0 && this.col < (Globals.MAX_COL-1) && this.col >= 0);
 	}
 	
+	/* (non-Javadoc)
+	 * @see quoridor.Tile#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals( Object obj ) {
 		if ( obj instanceof WallTile ) {

@@ -4,6 +4,11 @@ package quoridor;
 public class Display {
 	public Display(){}
 	
+	/**
+	 * Displays board
+	 * @param boardState
+	 * 	Current board state
+	 */
 	public static void DisplayBoard ( Board boardState ) {
 		final WallTile[][] walls = boardState.getWalls();
 		final PlayerTile p1 = boardState.getBlackPlayer();

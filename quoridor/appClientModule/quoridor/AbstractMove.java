@@ -3,6 +3,7 @@ package quoridor;
 import java.util.ArrayList;
 
 /**
+ * Template class of Move
  * Controls all movement here.
  * Including parsing move string to game move, applying move and undo move
  */
@@ -12,6 +13,11 @@ public abstract class AbstractMove implements Move {
 	
 	protected WallTile[][] walls;
 	
+	/**
+	 * Sets the current player, other player and walls for internal functions to use.
+	 * @param boardState
+	 * 	Current board state
+	 */
 	public AbstractMove ( Board boardState ){
 		currPlayer = boardState.getCurrentPlayer();
 		otherPlayer = boardState.getOtherPlayer();
@@ -19,13 +25,19 @@ public abstract class AbstractMove implements Move {
 		walls = boardState.getWalls();
 	}
 
+	/* (non-Javadoc)
+	 * @see quoridor.Move#applyMove(quoridor.PlayerTile, quoridor.Tile)
+	 */
 	public void applyMove ( PlayerTile player, Tile move ) {
 		if ( move instanceof WallTile )
-			player.putWall ( (WallTile)move, walls );
+			player.addWall ( (WallTile)move, walls );
 		else
 			player.setPos( move );
 	}
 
+	/* (non-Javadoc)
+	 * @see quoridor.Move#undoMove(quoridor.PlayerTile, quoridor.Tile)
+	 */
 	public void undoMove ( PlayerTile player, Tile move  ) {
 		if ( move instanceof WallTile )
 			player.removeWall ( (WallTile)move, walls );
@@ -33,6 +45,9 @@ public abstract class AbstractMove implements Move {
 			player.setPos( move );
 	}
 	
+	/* (non-Javadoc)
+	 * @see quoridor.Move#moveParser(java.lang.String)
+	 */
 	public Tile moveParser ( String moveString ) {
 		if ( moveString.length() == 3 ) {
 			moveString = moveString.toLowerCase();

@@ -7,9 +7,19 @@ public class Game {
 	private AIPlayer[] Computer;
 	private Board boardState;
 	
+	/**
+	 * 
+	 */
 	public Game() {
 	}
 	
+	/**
+	 * Get human player move
+	 * @param moveGen
+	 * 	Current board state move generator
+	 * @return
+	 * 	Move of current human player
+	 */
 	protected Tile playerInput ( Move moveGen ) {
 		Scanner in = new Scanner(System.in);
 		Tile move = null;
@@ -30,6 +40,11 @@ public class Game {
 		return move;
 	}
 	
+	/**
+	 * Main menu of game
+	 * Choose either Human or Computer for Black/White Player
+	 * If Computer is chosen, difficulty has to be chosen.
+	 */
 	protected void mainMenu () {
 		String[] PlayerString = { "Black Player", "White Player" };
 		Scanner in = new Scanner(System.in);
@@ -58,6 +73,12 @@ public class Game {
 		}
 	}
 	
+	/**
+	 * Choose difficulty of AI by depth level
+	 * Dumb is 1, Smart is 3 or manual depth to be inserted
+	 * @return
+	 * 	Difficulty of AI
+	 */
 	protected String chooseAI() {
 		Scanner in = new Scanner(System.in);
 		System.out.println ( "Choose a difficulty for the Computer");
@@ -80,6 +101,9 @@ public class Game {
 		return input;
 	}
 	
+	/**
+	 * Run Game
+	 */
 	protected void runGame (  ) {
 		mainMenu();
 		int round = 1;
@@ -98,7 +122,7 @@ public class Game {
 			System.out.println ( "Thinking of move..." );
 			Tile bestMove = null;
 			if ( Player[currPlayer.getPlayerNum()-1].equals("C") ) {
-				bestMove = Computer[currPlayer.getPlayerNum()-1].doBestMove(boardState);
+				bestMove = Computer[currPlayer.getPlayerNum()-1].getBestMove(boardState);
 				System.out.println( "Move: " + bestMove.toString() );
 			}
 			else
@@ -119,8 +143,10 @@ public class Game {
 		ResetQuitGame();
 	}
 	
+	/**
+	 * Reset or Quit Game prompt
+	 */
 	protected void ResetQuitGame () {
-	// RESET OR QUIT GAME
 		Scanner in = new Scanner(System.in);
 		String input = null;
 		
@@ -136,10 +162,18 @@ public class Game {
 		}while ( !input.equals("Q") && !input.equals("R") );
 	}
 	
-	public void testAI ( Integer blackComputer, Integer whiteComputer ) {
+	/**
+	 * Test Computer vs Computer (NegaMax)
+	 * for JUnit Tests (only display winner and final board state)
+	 * @param blackDifficulty
+	 * 	Black computer difficulty
+	 * @param whiteDifficulty
+	 * 	White computer difficulty
+	 */
+	public void testAI ( Integer blackDifficulty, Integer whiteDifficulty ) {
 		Computer = new AIPlayer[2];
-		Computer[0] = new AIPlayer (blackComputer); 
-		Computer[1] = new AIPlayer (whiteComputer); 
+		Computer[0] = new AIPlayer (blackDifficulty); 
+		Computer[1] = new AIPlayer (whiteDifficulty); 
 		boardState = new Board();	
 		
 		while ( !boardState.gameOver() ) {
@@ -147,7 +181,35 @@ public class Game {
 			PlayerTile currPlayer = boardState.getCurrentPlayer();
 			
 			Tile bestMove = null;
-			bestMove = Computer[currPlayer.getPlayerNum()-1].doBestMove(boardState);
+			bestMove = Computer[currPlayer.getPlayerNum()-1].getBestMove(boardState);
+			moveGen.applyMove ( currPlayer, bestMove );
+			boardState.switchCurrentPlayer();
+		}
+		
+		Display.DisplayBoard(boardState);
+		System.out.println( boardState.getWinner() + " has won the game!!!");
+	}
+
+	/**
+	 * Test Computer vs Computer (AlphaBeta)
+	 * for JUnit Tests (only display winner and final board state)
+	 * @param blackDifficulty
+	 * 	Black computer difficulty
+	 * @param whiteDifficulty
+	 * 	White computer difficulty
+	 */
+	public void testAI2 ( Integer blackDifficulty, Integer whiteDifficulty ) {
+		Computer = new AIPlayer[2];
+		Computer[0] = new AIPlayer (blackDifficulty); 
+		Computer[1] = new AIPlayer (whiteDifficulty); 
+		boardState = new Board();	
+		
+		while ( !boardState.gameOver() ) {
+			Move moveGen = boardState.getMoveGen();
+			PlayerTile currPlayer = boardState.getCurrentPlayer();
+			
+			Tile bestMove = null;
+			bestMove = Computer[currPlayer.getPlayerNum()-1].getBestMove2(boardState);
 			moveGen.applyMove ( currPlayer, bestMove );
 			boardState.switchCurrentPlayer();
 		}
@@ -156,26 +218,9 @@ public class Game {
 		System.out.println( boardState.getWinner() + " has won the game!!!");
 	}
 	
-	public void testAI2 ( Integer blackComputer, Integer whiteComputer ) {
-		Computer = new AIPlayer[2];
-		Computer[0] = new AIPlayer (blackComputer); 
-		Computer[1] = new AIPlayer (whiteComputer); 
-		boardState = new Board();	
-		
-		while ( !boardState.gameOver() ) {
-			Move moveGen = boardState.getMoveGen();
-			PlayerTile currPlayer = boardState.getCurrentPlayer();
-			
-			Tile bestMove = null;
-			bestMove = Computer[currPlayer.getPlayerNum()-1].doBestMove2(boardState);
-			moveGen.applyMove ( currPlayer, bestMove );
-			boardState.switchCurrentPlayer();
-		}
-		
-		Display.DisplayBoard(boardState);
-		System.out.println( boardState.getWinner() + " has won the game!!!");
-	}
-	
+	/**
+	 * Play Quoridor main function where Player, Computer and Board are initialised
+	 */
 	public void play () {
 		Player = new String[2];
 		Player[0] = Player[1] = "H";

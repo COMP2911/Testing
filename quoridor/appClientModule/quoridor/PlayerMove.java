@@ -4,21 +4,36 @@ import java.util.ArrayList;
 
 public class PlayerMove extends AbstractMove {
 	
+	/**
+	 * Constructor to initialise current board state
+	 * @param boardState
+	 */
 	public PlayerMove ( Board boardState ) {
 		super (boardState);
 	}
 
+	/**
+	 * Check if player move is valid
+	 * @param move
+	 * 	Move to be checked
+	 * @return
+	 * 	Validity of move
+	 */
 	public boolean validateMove ( Tile move ) {
 		if ( currPlayer.hasWon() || otherPlayer.hasWon() )
 			return false;
-		if ( move instanceof WallTile ) return false;
 		ArrayList<Tile> moveList = new ArrayList<Tile>();
 		GenerateMoves ( moveList );
 		return moveList.contains ( move );
 	}
-	
+
+	/**
+	 * Generate all player moves
+	 * @param moveList
+	 * 	All possible player moves
+	 */
 	public void GenerateMoves ( ArrayList<Tile> moveList ) {
-		for ( Tile move : getNeighbourNodes ( currPlayer, currPlayer.getGoal() ) ) {
+		for ( Tile move : getNeighbourTiles ( currPlayer, currPlayer.getGoal() ) ) {
 		// Is move in board and wall not blocking???
 			if ( move.inBoard() && !move.inBetweenWall ( currPlayer, walls ) ) {
 			// If other player is in the spot
@@ -45,10 +60,12 @@ public class PlayerMove extends AbstractMove {
 		}
 	}
 	
-	protected Tile jump () {		
-		//int tempRow = otherRow;
-		//int tempCol = otherCol;
-		
+	/**
+	 * Does normal jump move
+	 * @return
+	 * 	Jump move
+	 */
+	protected Tile jump () {				
 		int currRow = currPlayer.getRow();
 		int currCol = currPlayer.getCol();
 		
@@ -63,10 +80,12 @@ public class PlayerMove extends AbstractMove {
 		return new Tile ( otherCol, otherRow );
 	}
 	
+	/**
+	 * Does jump left move
+	 * @return
+	 * 	Jump left move
+	 */
 	protected Tile jumpLeft () {			
-		//int tempRow = otherRow;
-		//int tempCol = otherCol;
-		
 		int currRow = currPlayer.getRow();
 		int currCol = currPlayer.getCol();
 		
@@ -78,11 +97,13 @@ public class PlayerMove extends AbstractMove {
 		
 		return new Tile ( otherCol, otherRow );
 	}
-	
+
+	/**
+	 * Does jump right move
+	 * @return
+	 * 	Jump right move
+	 */
 	protected Tile jumpRight () {			
-		//int tempRow = otherRow;
-		//int tempCol = otherCol;
-		
 		int currRow = currPlayer.getRow();
 		int currCol = currPlayer.getCol();
 		
@@ -95,18 +116,26 @@ public class PlayerMove extends AbstractMove {
 		return new Tile ( otherCol, otherRow );
 	}
 
-    // Get Neighbours List
-	protected Tile[] getNeighbourNodes ( Tile current, int goalRow ) {
+	/**
+	 * Get the neighbours of the current tile, priority given to goal direction
+	 * @param current
+	 * 	Current tile
+	 * @param goalRow
+	 * 	Goal
+	 * @return
+	 * 	Neighbour tiles
+	 */
+	protected Tile[] getNeighbourTiles ( Tile current, int goalRow ) {
 		int x = current.getCol();
 		int y = current.getRow();
 		
 		if ( goalRow == 8 ) {
-			Tile[] neighbourNodes = { new Tile (x,y+1), new Tile (x-1,y), new Tile (x+1,y), new Tile (x,y-1) };
-			return neighbourNodes;
+			Tile[] neighbourTiles = { new Tile (x,y+1), new Tile (x-1,y), new Tile (x+1,y), new Tile (x,y-1) };
+			return neighbourTiles;
 		}
 		else {
-			Tile[] neighbourNodes = { new Tile (x,y-1), new Tile (x-1,y), new Tile (x+1,y), new Tile (x,y+1) };
-			return neighbourNodes;
+			Tile[] neighbourTiles = { new Tile (x,y-1), new Tile (x-1,y), new Tile (x+1,y), new Tile (x,y+1) };
+			return neighbourTiles;
 		}
 	}
 }

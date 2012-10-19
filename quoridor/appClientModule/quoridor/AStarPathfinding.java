@@ -10,10 +10,24 @@ public class AStarPathfinding {
 	private ArrayList<AStarNode> closedNodes;
 	private Queue<AStarNode> openNodes;
 	
+	/**
+	 * 
+	 */
 	public AStarPathfinding () {
 	}
 	
-	public boolean pathFound ( Tile start, Integer goalRow, WallTile[][] wallNodes ) {
+	/**
+	 * Checks if there is a path to goal
+	 * @param start
+	 * 	Starting position of current player
+	 * @param goalRow
+	 * 	Goal of current player
+	 * @param walls
+	 * 	Walls currently on the board
+	 * @return
+	 * 	Whether there's a path to goal
+	 */
+	public boolean pathFound ( Tile start, Integer goalRow, WallTile[][] walls ) {
 		closedNodes = new ArrayList<AStarNode>();
 		openNodes = new PriorityQueue<AStarNode>();
 
@@ -21,10 +35,10 @@ public class AStarPathfinding {
 		while ( !( openNodes.isEmpty() ) ) {
 			AStarNode current = openNodes.remove();
 			
-			for ( Tile neighbour : getNeighbourNodes ( current, goalRow ) ) {			
+			for ( Tile neighbour : getNeighbourTiles ( current, goalRow ) ) {			
 			// Check if neighbour is in between walls or in closed/open nodes
 				if ( !neighbour.inBoard() || 
-					 neighbour.inBetweenWall ( ((Tile)current), wallNodes ) ){
+					 neighbour.inBetweenWall ( ((Tile)current), walls ) ){
 					continue;
 				}
 				int neighbourRow = neighbour.getRow();
@@ -45,8 +59,19 @@ public class AStarPathfinding {
 		}
 		return false;
 	}
-	
-	public int movesLength ( Tile start, Integer goalRow, WallTile[][] wallNodes ) {
+
+	/**
+	 * Get the number of moves to reach the goal
+	 * @param start
+	 * 	Starting position of current player
+	 * @param goalRow
+	 * 	Goal of current player
+	 * @param walls
+	 * 	Walls currently on the board
+	 * @return
+	 * 	Number of moves to reach the goal
+	 */
+	public int movesLength ( Tile start, Integer goalRow, WallTile[][] walls ) {
 		closedNodes = new ArrayList<AStarNode>();
 		openNodes = new PriorityQueue<AStarNode>();
 
@@ -55,10 +80,10 @@ public class AStarPathfinding {
 		while ( !( openNodes.isEmpty() ) ) {
 			AStarNode current = openNodes.remove();
 			
-			for ( Tile neighbour : getNeighbourNodes ( current, goalRow ) ) {			
+			for ( Tile neighbour : getNeighbourTiles ( current, goalRow ) ) {			
 			// Check if neighbour is in between walls or in closed/open nodes
 				if ( !neighbour.inBoard() || 
-					 neighbour.inBetweenWall ( ((Tile)current), wallNodes ) ){
+					 neighbour.inBetweenWall ( ((Tile)current), walls ) ){
 					continue;
 				}
 				
@@ -88,7 +113,19 @@ public class AStarPathfinding {
 		return Integer.MAX_VALUE;
 	}
 	
-	public LinkedList<Tile> getMoves ( Tile start, Integer goalRow, WallTile[][] wallNodes ) {
+
+	/**
+	 * Get the moves to reach the goal
+	 * @param start
+	 * 	Starting position of current player
+	 * @param goalRow
+	 * 	Goal of current player
+	 * @param walls
+	 * 	Walls currently on the board
+	 * @return
+	 * 	Move list from start to goal
+	 */
+	public LinkedList<Tile> getMoves ( Tile start, Integer goalRow, WallTile[][] walls ) {
 		closedNodes = new ArrayList<AStarNode>();
 		openNodes = new PriorityQueue<AStarNode>();
 
@@ -97,10 +134,10 @@ public class AStarPathfinding {
 		while ( !( openNodes.isEmpty() ) ) {
 			AStarNode current = openNodes.remove();
 			
-			for ( Tile neighbour : getNeighbourNodes ( current, goalRow ) ) {			
+			for ( Tile neighbour : getNeighbourTiles ( current, goalRow ) ) {			
 			// Check if neighbour is in between walls or in closed/open nodes
 				if ( !neighbour.inBoard() || 
-					 neighbour.inBetweenWall ( ((Tile)current), wallNodes ) ){
+					 neighbour.inBetweenWall ( ((Tile)current), walls ) ){
 					continue;
 				}
 				
@@ -131,18 +168,26 @@ public class AStarPathfinding {
 		return null;
 	}
 	
-// Get Neighbours List
-	protected Tile[] getNeighbourNodes ( Tile current, int goalRow ) {
+	/**
+	 * Get the neighbours of the current tile, priority given to goal direction
+	 * @param current
+	 * 	Current tile
+	 * @param goalRow
+	 * 	Goal
+	 * @return
+	 * 	Neighbour tiles
+	 */
+	protected Tile[] getNeighbourTiles ( Tile current, int goalRow ) {
 		int x = current.getCol();
 		int y = current.getRow();
 		
 		if ( goalRow == 8 ) {
-			Tile[] neighbourNodes = { new Tile (x,y+1), new Tile (x-1,y), new Tile (x+1,y), new Tile (x,y-1) };
-			return neighbourNodes;
+			Tile[] neighbourTiles = { new Tile (x,y+1), new Tile (x-1,y), new Tile (x+1,y), new Tile (x,y-1) };
+			return neighbourTiles;
 		}
 		else {
-			Tile[] neighbourNodes = { new Tile (x,y-1), new Tile (x-1,y), new Tile (x+1,y), new Tile (x,y+1) };
-			return neighbourNodes;
+			Tile[] neighbourTiles = { new Tile (x,y-1), new Tile (x-1,y), new Tile (x+1,y), new Tile (x,y+1) };
+			return neighbourTiles;
 		}
 	}
 }

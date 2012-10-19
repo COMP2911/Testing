@@ -6,11 +6,19 @@ public class WallMove extends AbstractMove {
 
 	private AStarPathfinding AStar;
 	
+	/**
+	 * @param boardState
+	 */
 	public WallMove ( Board boardState ) {
 		super (boardState);
 		AStar = new AStarPathfinding();
 	}
 	
+	/**
+	 * Generate all possible wall moves of current move
+	 * @param moveList
+	 * 	All possible wall moves
+	 */
 	public void GenerateMoves ( ArrayList<Tile> moveList ) {
 		for ( int a = 0; a < (Globals.MAX_ROW-1); ++a ) {
 		// 8 ways of placing a wall on a col when board is empty
@@ -27,6 +35,13 @@ public class WallMove extends AbstractMove {
 		}
 	}
 
+	/**
+	 * Check if wall move is valid
+	 * @param move
+	 * 	Wall move to be checked
+	 * @return
+	 * 	Validity of wall move
+	 */
 	public boolean validateMove ( Tile move ) {
 		if ( currPlayer.hasWon() || otherPlayer.hasWon() || !currPlayer.hasWallLeft() )
 			return false;
