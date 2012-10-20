@@ -8,6 +8,9 @@ import java.util.ArrayList;
  */
 public class WallMove extends AbstractMove {	
 
+	/**
+	 * A* Pathfinding
+	 */
 	private AStarPathfinding AStar;
 	
 	/**

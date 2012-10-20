@@ -18,6 +18,9 @@ import static java.util.Arrays.asList;
 public class ProvidedTests
 {
     
+    /**
+     * All fences in game
+     */
     static final String [] ALL_FENCES = {"a1h", "a1v", "a2h", "a2v", "a3h",
             "a3v", "a4h", "a4v", "a5h", "a5v", "a6h", "a6v", "a7h", "a7v",
             "a8h", "a8v", "b1h", "b1v", "b2h", "b2v", "b3h", "b3v", "b4h",
@@ -34,10 +37,14 @@ public class ProvidedTests
             "h1v", "h2h", "h2v", "h3h", "h3v", "h4h", "h4v", "h5h", "h5v",
             "h6h", "h6v", "h7h", "h7v", "h8h", "h8v"};
     
-    Validator              validator  = new Validator (); // Validator is
-                                                          // student supplied
-                                                          // class
+    /**
+     * Validator is student supplied class
+     */
+    Validator              validator  = new Validator ();
                                                           
+    /**
+     * Check if list of moves is valid
+     */
     void checkValid ()
     {
         int n = moves.size ();
@@ -55,10 +62,19 @@ public class ProvidedTests
         assertFalse ("Invalid: " + testMoves, validator.check (testMoves));
     }
     
-    List <String> moves;   // assumed valid list of moves from start of game
+    /**
+     * Assumed valid list of moves from start of game
+     */
+    List <String> moves;
                             
-    String        goodMove; // good next move to be tested for validity
-    String        badMove; // bad next move to be tested for validity
+    /**
+     * Good next move to be tested for validity
+     */
+    String        goodMove;
+    /**
+     * Bad next move to be tested for validity
+     */
+    String        badMove;
                             
     @Test
     public void init ()

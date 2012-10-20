@@ -14,17 +14,19 @@ public interface Move {
 	 */
 	public void GenerateMoves ( ArrayList<Tile> moveList );
 	/**
-	 * Apply move to player on current board state
+	 * Apply wall or player move
 	 * @param player
-	 * 	Player to apply move on
+	 * 	Player to apply move
 	 * @param move
 	 * 	Move to be applied
 	 */
 	public void applyMove ( PlayerTile player, Tile move  );
 	/**
-	 * ??Undo move??
+	 * Undo wall or player move
 	 * @param player
+	 * 	Player to undo move
 	 * @param move
+	 * 	Move to undo
 	 */
 	public void undoMove ( PlayerTile player, Tile move  );
 	/**

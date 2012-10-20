@@ -6,8 +6,14 @@ package quoridor;
  *
  */
 public class WallTile extends Tile {
-	private boolean horizontal;	// Top Wall
-	private boolean vertical;	// Right Wall
+	/**
+	 * Top Wall of Tile
+	 */
+	private boolean horizontal;
+	/**
+	 * Right Wall of Tile
+	 */
+	private boolean vertical;
 	
 	/**
 	 * Constructor to set position of tile and orientation of tile
@@ -38,6 +44,19 @@ public class WallTile extends Tile {
 	 */
 	public WallTile ( Tile i, Character orientation ) {
 		this (i.getCol(), i.getRow(), orientation);
+	}
+	
+	/**
+	 * Variant constructor to duplicate an instance of Wall Tile
+	 * @param i
+	 * 	Wall Tile to be duplicated
+	 */
+	public WallTile ( Tile i ) {
+		super(i.getCol(), i.getRow());
+		if ( ((WallTile)i).hasHorizontal() )
+			horizontal = true;
+		else
+			vertical = true;
 	}
 	
 	/* (non-Javadoc)
@@ -107,5 +126,19 @@ public class WallTile extends Tile {
 					(this.horizontal == that.horizontal) && (this.vertical == that.vertical);
 		}
 		return false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see quoridor.Tile#toString()
+	 */
+	@Override
+	public String toString () {
+		char rowC = '1';
+		rowC += row;
+		char colC = 'a';
+		colC += col;
+		char wall = ((WallTile)this).hasVertical() ? 'v' : 'h';
+		
+		return new String(""+colC+rowC+wall);
 	}
 }

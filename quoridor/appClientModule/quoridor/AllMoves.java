@@ -7,7 +7,13 @@ import java.util.ArrayList;
  */
 public class AllMoves extends AbstractMove {
 	
+	/**
+	 * To generate player moves
+	 */
 	private Move pMoveGen;
+	/**
+	 * To generate wall moves 
+	 */
 	private Move wMoveGen;
 	
 	/**
@@ -20,6 +26,9 @@ public class AllMoves extends AbstractMove {
 		wMoveGen = new WallMove(boardState);
 	}
 
+	/* (non-Javadoc)
+	 * @see quoridor.AbstractMove#GenerateMoves(java.util.ArrayList)
+	 */
 	public void GenerateMoves(ArrayList<Tile> moveList) {
 	}
 	

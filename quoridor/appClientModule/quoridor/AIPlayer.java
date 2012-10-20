@@ -6,9 +6,22 @@ import java.util.ArrayList;
  * AI player class has MinMax algorithm and handles AI movement
  */
 public class AIPlayer {
+	/**
+	 * minMax Depth
+	 */
 	private Integer minMaxDepth;
+	/**
+	 * Best move for AI
+	 */
 	private Tile bestMove;
+	/**
+	 * Current boardState
+	 */
 	private Board boardState;
+	/**
+	 * Check if other player has reached third row for wall moves
+	 */
+	private boolean thirdRowReached;
 	
 	/**
 	 * Constructor of AI Player to initialise the depth for MinMax algorithm 
@@ -103,8 +116,9 @@ public class AIPlayer {
 	protected Double runNegaMax ( int depth, double alpha, double beta ) {
 		PlayerTile currPlayer = boardState.getCurrentPlayer();
 		
-		if ( depth == this.minMaxDepth || currPlayer.hasWon() ) {			
-			return -getCost( boardState );
+		if ( depth == this.minMaxDepth || currPlayer.hasWon() ) {
+			double score = 	-getCost( boardState );
+			return score;
 		}
 		
 		for ( Tile move : generateAllMoves( boardState ) ) {
@@ -123,18 +137,66 @@ public class AIPlayer {
 
             if (score > alpha) {
                 alpha = score;
-                if ( depth == 0 )
+                if ( depth == 0 ) {
                 	bestMove = move;
+                }
             }
             if (alpha >= beta)
                     break;
 		}
 		return alpha;
 	}
-	
+
+	/**
+	 * NegaScout algorithm a variant of NegaMax algorithm
+	 * @param depth
+	 * 	Current depth of the MinMax
+	 * @param alpha
+	 * 	Lower bound
+	 * @param beta
+	 * 	Upper bound
+	 * @return
+	 * 	Cost of current state
+	 */
+	protected Double runNegaScout ( int depth, double alpha, double beta ) {
+		PlayerTile currPlayer = boardState.getCurrentPlayer();
+		
+		if ( depth == this.minMaxDepth || boardState.gameOver() ) {	
+			return -getCost( boardState );
+		}
+		double beta2 = beta; 
+		for ( Tile move : generateAllMoves( boardState ) ) {
+			Move moveGen = boardState.getMoveGen();
+			Tile oldPos = new Tile ( currPlayer.getCol(), currPlayer.getRow() );
+			moveGen.applyMove ( currPlayer, move );
+			boardState.switchCurrentPlayer();
+			double score = -runNegaScout ( depth+1, -beta2, -alpha );
+            if ( alpha < score && score < beta )
+    			score = -runNegaScout ( depth+1, -beta, -alpha );
+			boardState.switchCurrentPlayer();
+			
+			if ( move instanceof WallTile )
+				moveGen.undoMove ( currPlayer, move );
+			else
+				moveGen.undoMove ( currPlayer, oldPos );
+			
+            if (score > alpha) {
+                alpha = score;
+                if ( depth == 0 ){
+                	bestMove = move;
+                //System.out.println("Best Move: " + bestMove.toString() );
+                }
+                //System.out.println("Move #" + depth + ": " + move.toString() );
+            }
+            if (alpha >= beta)
+            	break;
+            beta2 = alpha + 1;
+		}
+		return alpha;
+	}	
 	
 	/**
-	 * Get the best move for AI (NegaMax)
+	 * Get the best move for AI (NegaScout)
 	 * @param boardState
 	 * 	Current board state
 	 * @return
@@ -144,22 +206,11 @@ public class AIPlayer {
 		double alpha = Double.NEGATIVE_INFINITY;
 		double beta = Double.POSITIVE_INFINITY;
 		this.boardState = boardState;
-		runNegaMax ( 0, -beta, -alpha );
-		return bestMove;
-	}
-
-	/**
-	 * Get the best move for AI (AlphaBeta)
-	 * @param boardState
-	 * 	Current board state
-	 * @return
-	 * 	Best move
-	 */
-	public Tile getBestMove2 ( Board boardState ) {
-		double alpha = Double.NEGATIVE_INFINITY;
-		double beta = Double.POSITIVE_INFINITY;
-		this.boardState = boardState;
-		runAlphaBeta ( 0, alpha, beta );
+		if ( boardState.getOtherPlayer().getDiff() < 7 )
+			thirdRowReached = true;
+		else
+			thirdRowReached = false;
+		runNegaScout ( 0, -beta, -alpha );
 		return bestMove;
 	}
 	
@@ -177,7 +228,7 @@ public class AIPlayer {
 		Move pMoveGen = new PlayerMove (boardState);
 		pMoveGen.GenerateMoves ( allMoves );
 	// Generate Wall Moves
-		if ( boardState.getCurrentPlayer().hasWallLeft() && boardState.getOtherPlayer().getDiff() < 7 ) {
+		if ( boardState.getCurrentPlayer().hasWallLeft() && thirdRowReached )  {
 			Move wMoveGen = new WallMove (boardState);
 			wMoveGen.GenerateMoves ( allMoves );
 		}

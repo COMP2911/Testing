@@ -1,0 +1,4 @@
+H C 1
+19 19 19
+g8 h8h f8 f8h e8 d8h e7 d2h e6 d8 e5 d7 b7v d6 e4 d5 e3 d4 e2 d3 a6v d2 a4v e3 a2v e4 h1h e5 b1h e6 f1h e7 d1h e8 e1 e9
+d9 f8 6 2

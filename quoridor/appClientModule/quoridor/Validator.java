@@ -8,6 +8,9 @@ import java.util.List;
  *
  */
 public class Validator {
+	/**
+	 * Current board state
+	 */
 	Board boardState;
 	// TODO complete this class using your project code
 	// you must implement the no-arg constructor and the check method

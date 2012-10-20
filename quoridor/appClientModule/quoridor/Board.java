@@ -7,13 +7,37 @@ package quoridor;
  *
  */
 public class Board {
+	/**
+	 * Black player starting column
+	 */
 	private final int bpX = 4;
+	/**
+	 * Black player starting row
+	 */
 	private final int bpY = 8;
+	/**
+	 * White player starting column
+	 */
 	private final int wpX = 4;
+	/**
+	 * White player starting row
+	 */
 	private final int wpY = 0;
+	/**
+	 * Black Player
+	 */
 	private PlayerTile blackPlayer;
+	/**
+	 * White Player
+	 */
 	private PlayerTile whitePlayer;
+	/**
+	 * Walls
+	 */
 	private WallTile[][] walls;
+	/**
+	 * Current player number
+	 */
 	private Integer currentPlayer;
 	
 	/**

@@ -6,7 +6,6 @@ package quoridor;
  *
  */
 public class Display {
-	public Display(){}
 	
 	/**
 	 * Displays board

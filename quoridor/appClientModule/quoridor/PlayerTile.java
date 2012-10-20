@@ -5,8 +5,17 @@ package quoridor;
  *
  */
 public class PlayerTile extends Tile {
+	/**
+	 * Player number 1 or 2
+	 */
 	private int playerNum;
+	/**
+	 * Number of walls left
+	 */
 	private int wallCount;
+	/**
+	 * Goal row
+	 */
 	private int goal;	
 	
 	/**
@@ -44,12 +53,22 @@ public class PlayerTile extends Tile {
 	}
 	
 	/**
-	 * Gets the number of walls that the player has
+	 * Gets the number of walls that the player has left
 	 * @return
 	 * 	Walls that player has left
 	 */
 	public int getWallsLeft () {
 		return wallCount;
+	}
+	
+	/**
+	 * Set number of walls player has left
+	 * @param wallCount
+	 * 	New wall left
+	 * 	
+	 */
+	public void setWallsLeft ( int wallCount ) {
+		this.wallCount = wallCount; 
 	}
 	
 	/**

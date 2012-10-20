@@ -8,9 +8,17 @@ import java.util.ArrayList;
  * Including parsing move string to game move, applying move and undo move
  */
 public abstract class AbstractMove implements Move {
+	/**
+	 * Current Player of current board state
+	 */
 	protected PlayerTile currPlayer;
+	/**
+	 * Other Player of current board state
+	 */
 	protected PlayerTile otherPlayer;
-	
+	/**
+	 * Walls of current board state
+	 */
 	protected WallTile[][] walls;
 	
 	/**
@@ -50,7 +58,6 @@ public abstract class AbstractMove implements Move {
 	 */
 	public Tile moveParser ( String moveString ) {
 		if ( moveString.length() == 3 ) {
-			moveString = moveString.toLowerCase();
 			Integer col = (moveString.charAt(0) - 'a');
 			Integer row = (moveString.charAt(1) - '1');
 			Character orientation = moveString.charAt(2);
@@ -59,7 +66,6 @@ public abstract class AbstractMove implements Move {
 			return new WallTile ( col, row, orientation );
 		}
 		else if ( moveString.length() == 2 ) {
-			moveString = moveString.toLowerCase();
 			Integer col = (moveString.charAt(0) - 'a');
 			Integer row = (moveString.charAt(1) - '1');
 			return new Tile ( col, row );

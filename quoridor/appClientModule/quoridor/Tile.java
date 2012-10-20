@@ -6,7 +6,13 @@ package quoridor;
  *
  */
 public class Tile {
+	/**
+	 * Column of tile
+	 */
 	protected int col;	// x
+	/**
+	 * Row of tile
+	 */
 	protected int row;	// y
 
 	/**
@@ -19,6 +25,14 @@ public class Tile {
 	public Tile ( int col, int row ) {
 		this.col = col;
 		this.row = row;
+	}
+	
+	/**
+	 * @param i
+	 */
+	public Tile ( Tile i ) {
+		this.col = i.getCol();
+		this.row = i.getRow();
 	}
 	
 	/**
@@ -106,12 +120,7 @@ public class Tile {
 		rowC += row;
 		char colC = 'a';
 		colC += col;
-		char wall = ' ';
 		
-		if ( this instanceof WallTile ) {
-			wall = ((WallTile)this).hasVertical() ? 'v' : 'h';
-		}
-
-		return new String(""+colC+rowC+wall);
+		return new String(""+colC+rowC);
 	}
 }

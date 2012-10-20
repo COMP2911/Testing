@@ -1,7 +1,5 @@
 package quoridor;
 
-import static org.junit.Assert.*;
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -12,39 +10,56 @@ import org.junit.Test;
  */
 public class AITest {
 	Game game;
+	/**
+	 * Set up normal game for AI Testing
+	 * @throws Exception
+	 */
 	@Before
 	public void setUp() throws Exception {
 		game = new Game();
 	}
 
+	/**
+	 * Dumb AI vs Dumb AI both using MinMax algorithm with depth 1
+	 */
 	@Test
-	public void DumbVSDumbNM() {
+	public void DumbVSDumb() {
 		game.testAI(1, 1);
 	}
 
+
+	/**
+	 * Dumb AI vs Smart AI both using MinMax algorithm with depth 1 & 2 respectively
+	 */
 	@Test
-	public void DumbVSDumbAB() {
-		game.testAI2(1, 1);
+	public void DumbVSSmart() {
+		game.testAI(1, 2);
 	}
 
+
+	/**
+	 * Smart AI vs Smart AI both using MinMax algorithm with depth 2
+	 */
 	@Test
-	public void DumbVSSmartNM() {
-		game.testAI(1, 3);
+	public void SmartVSSmart() {
+		game.testAI(2, 2);
 	}
 
-	@Test
-	public void DumbVSSmartAB() {
-		game.testAI2(1, 3);
-	}
 
+	/**
+	 * Testing MinMax algorithm with depth 3
+	 */
 	@Test
-	public void SmartVSSmartNM() {
+	public void TestDepth3() {
 		game.testAI(3, 3);
 	}
 	
+	/**
+	 * Testing MinMax algorithm with depth 4
+	 */
 	@Test
-	public void SmartVSSmartAB() {
-		game.testAI2(3, 3);
+	public void TestDepth4() {
+		game.testAI(4, 4);
 	}
 
 }

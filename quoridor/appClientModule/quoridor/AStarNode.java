@@ -4,8 +4,17 @@ package quoridor;
  * Node with G & F costs and parentPosition for A* Pathfinding
  */
 public class AStarNode extends Tile implements Comparable<AStarNode> {
+	/**
+	 * G Cost - Start to Current cost
+	 */
 	private int gCost;
+	/**
+	 * F Cost - G Cost + Heuristic Cost (Current to Goal cost)
+	 */
 	private int fCost;
+	/**
+	 * Parent position in list of close nodes
+	 */
 	private int parentPosition;
 	
 	/**

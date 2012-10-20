@@ -1,5 +1,7 @@
 package quoridor;
 
+import java.io.*;
+import java.util.LinkedList;
 import java.util.Scanner;
 
 /**
@@ -10,127 +12,323 @@ public class Game {
 	private String[] Player;
 	private AIPlayer[] Computer;
 	private Board boardState;
+	private LinkedList<Tile> moveList;
+	int round;
+	int[] Turn;
 	
-	/**
-	 * 
-	 */
-	public Game() {
+	public Game () {
+		Player = new String[2];
+		Computer = new AIPlayer[2];
+		Turn = new int[2];
+		moveList = new LinkedList<Tile>();
 	}
-	
 	/**
-	 * Get human player move
-	 * @param moveGen
-	 * 	Current board state move generator
+	 * Get string input from bash
 	 * @return
-	 * 	Move of current human player
+	 * 	String input
 	 */
-	protected Tile playerInput ( Move moveGen ) {
-		Scanner in = new Scanner(System.in);
-		Tile move = null;
-		
-		System.out.print ( "Input Move: " );
-		do {
-			String moveString = in.nextLine();
-			move = moveGen.moveParser( moveString );
-			if ( move != null ) {				
-				if ( !moveGen.validateMove(move) )
-					move = null;
-			}
-			
-			if ( move == null )
-				System.out.println ( "Invalid Move!!! Type again..." );
-		}while ( move == null );
-		
-		return move;
+	protected String getStringInput () {
+		Scanner scan = new Scanner ( System.in );
+		return scan.nextLine().toLowerCase();
 	}
 	
 	/**
-	 * Main menu of game
-	 * Choose either Human or Computer for Black/White Player
-	 * If Computer is chosen, difficulty has to be chosen.
+	 * Get integer input from bash
+	 * @return
+	 * 	Integer input
 	 */
+	protected Integer getIntegerInput () {
+		Scanner scan = new Scanner ( System.in );
+		return scan.nextInt();
+	}
+	
 	protected void mainMenu () {
-		String[] PlayerString = { "Black Player", "White Player" };
-		Scanner in = new Scanner(System.in);
-		for ( int turn = 0; turn < 2; ++turn ) {
-			System.out.println ( "Is the " + PlayerString[turn] + " Human(H) or Computer(C)?");
-			System.out.println ( "Please insert H/C accordingly." );
-			String input = null;
-			do {
-				input = in.nextLine();
-				if ( input.length() != 1 ) {
-					continue; 
-				}
-				input = input.toUpperCase();
-				
-			}while ( !input.equals("H") && !input.equals("C") );
-			Player[turn] = input;
-			if ( Player[turn].equals("C") ) {
-				input = chooseAI();
-				if ( input.equals("D") )
-					Computer[turn] = new AIPlayer(1);
-				else if ( input.equals("S") )
-					Computer[turn] = new AIPlayer(3);
+		System.out.println ( "Welcome to Quoridor 1.0" );
+		System.out.println ( "Choose the following game modes:" );
+		System.out.println ( "(1) New Game" );
+		System.out.println ( "(2) Load Game" );
+		//System.out.println ( "(3) Network Game" );
+		System.out.println ( "(3) Quit Game" );
+		boolean mode = false;
+		while (!mode) {
+			switch ( getIntegerInput() ) {
+			case 1:
+				newGame();
+				mode = true;
+				break;
+			case 2:
+				if ( !loadGame () )
+					continue;
 				else
-					Computer[turn] = new AIPlayer( Integer.parseInt (input) );
+					mode = true;
+				break;
+			case 3:
+				System.out.println ( "Thanks for playing");
+				mode = true;
+				break;
+			/*case 4:
+				mode = true;
+				break;*/
+			default:
+				System.out.println ( "Invalid Input!!!" ); 
+				break;
+			}
+		}
+	}
+	
+
+	/**
+	 * Loads game;
+	 */
+	protected boolean loadGame() {
+		moveList.clear();
+		boardState = new Board();
+		
+		try{
+			// Create file 
+			FileReader fstream = new FileReader("game.txt");
+			BufferedReader in = new BufferedReader(fstream);
+			String[] data;
+			// Human/Computer/CurrentPlayer
+			data  = in.readLine().split(" ");
+			Player[0] = data[0];			Player[1] = data[1];
+			if ( Integer.parseInt(data[2]) == 2 )
+				boardState.switchCurrentPlayer();
+			// Turn[2]/Round
+			data  = in.readLine().split(" ");
+			Turn[0] = Integer.parseInt(data[0]);
+			Turn[1] = Integer.parseInt(data[1]);
+			round = Integer.parseInt(data[2]);
+			// Move List
+			Move moveGen = boardState.getMoveGen();
+			for ( String move : in.readLine().split(" ") ) {
+				Tile moveTile = moveGen.moveParser(move);
+				moveList.add(moveTile);
+				moveGen.applyMove(boardState.getCurrentPlayer(), moveTile);
+			}
+			// Player 1 & 2 position/Player 1 & 2 wall count
+			data  = in.readLine().split(" ");
+			moveGen.applyMove( boardState.getBlackPlayer(), moveGen.moveParser(data[0]) );
+			moveGen.applyMove( boardState.getWhitePlayer(), moveGen.moveParser(data[1]) );
+			boardState.getBlackPlayer().setWallsLeft( Integer.parseInt(data[2]) );
+			boardState.getWhitePlayer().setWallsLeft( Integer.parseInt(data[3]) );
+			
+			in.close();
+		}catch (IOException e){//Catch exception if any
+			System.err.println("No file found: " + e.getMessage());
+			return false;
+		}
+		
+		runGame();
+		return true;
+	}
+	
+	/**
+	 * Saves current game state
+	 */
+	protected void saveGame() {
+		try{
+			// Create file 
+			FileWriter fstream = new FileWriter("game.txt");
+			BufferedWriter out = new BufferedWriter(fstream);
+			// Human/Computer/CurrentPlayer
+			out.write( Player[0] + " " + Player[1] + " " + boardState.getCurrentPlayer().getPlayerNum() );
+			out.newLine();
+			// Turn[2]/Round
+			out.write( Turn[0] + " " + Turn[1] + " " + round );
+			out.newLine();
+			// Move List
+			StringBuilder sb = new StringBuilder();
+			for ( Tile move : moveList ) {
+				sb.append(move.toString() + " ");
+			}
+			sb.deleteCharAt(sb.length()-1);
+			out.write(sb.toString());
+			out.newLine();
+			// Player 1 & 2 position/Player 1 & 2 wall count
+			out.write( (new Tile(boardState.getBlackPlayer())).toString() + " " + (new Tile(boardState.getWhitePlayer())).toString() + " " + 
+						boardState.getBlackPlayer().getWallsLeft() + " " + boardState.getWhitePlayer().getWallsLeft() );
+			out.newLine();
+			//Close the output stream
+			out.close();
+			System.out.println ( "Game saved" );
+		}catch (Exception e){//Catch exception if any
+			System.err.println("Error: " + e.getMessage());
+		}
+	}
+	
+	/**
+	 * Initialise new game
+	 */
+	protected void newGame () {
+		choosePlayers();
+		resetGame();
+	}
+	
+	/**
+	 * Reset game
+	 */
+	protected void resetGame () {
+		moveList.clear();
+		boardState = new Board();
+		//Computer[0] = Computer[1] = null;
+		round = 1;
+		Turn[0] = Turn[1] = 1;
+		runGame();
+	}
+	
+	/**
+	 * Undo move
+	 * @param moveGen
+	 * 	Board move generator
+	 */
+	protected void undoMove ( Move moveGen ) {
+		PlayerTile currPlayer = boardState.getCurrentPlayer();
+		PlayerTile otherPlayer = boardState.getOtherPlayer();
+		
+	// Human-Human - undo other player's move
+		moveGen.undoMove ( otherPlayer, moveList.pop() );
+		--Turn[otherPlayer.getPlayerNum()-1];
+		if ( currPlayer.getPlayerNum() == 1 )
+			--round;
+	// Human-Computer - if it's computer 
+		if ( Player[otherPlayer.getPlayerNum()-1].equals("C") ) {
+			if ( currPlayer.getPlayerNum() == 2  && round == 1 ) {
+				boardState.switchCurrentPlayer();
+				return;
+			}
+		// Undo current player's move
+			moveGen.undoMove ( currPlayer, moveList.pop() );		
+			--Turn[currPlayer.getPlayerNum()-1];
+			if ( currPlayer.getPlayerNum() == 2 )
+				--round;
+		}
+		else {
+			boardState.switchCurrentPlayer();
+		}
+	}
+	
+	
+	/**
+	 * Get Player Input
+	 * @param moveGen
+	 * 	Move generator
+	 * @return
+	 * 	Player input
+	 */
+	protected String playerInput ( Move moveGen ) {
+		System.out.println ( "Commands: <col><row>, <col><row><h/v>, (Q)uit, (U)ndo, (E)nd, (S)ave" );
+		System.out.print ( "Input Move: " );
+		while (true) {
+			String input = getStringInput();
+			if ( input.equals("quit") || input.equals("q") )
+				return "quit";
+			else if ( input.equals("end") || input.equals("e") )
+				return "end";
+			else if ( input.equals("save") || input.equals("s") )
+				saveGame();
+			else if ( (input.equals("undo") || input.equals("u")) && !moveList.isEmpty() )
+				return "undo";
+			else {
+				Tile bestMove = moveGen.moveParser( input );
+				if ( bestMove != null ) {				
+					if ( !moveGen.validateMove(bestMove) )
+						bestMove = null;
+				}
+
+				if ( bestMove == null )
+					System.out.println ( "Invalid Move!!!" );
+				else
+					return input;
 			}
 		}
 	}
 	
 	/**
-	 * Choose difficulty of AI by depth level
-	 * Dumb is 1, Smart is 3 or manual depth to be inserted
-	 * @return
-	 * 	Difficulty of AI
+	 * Choosing of players
+	 * Choose either Human or Computer for Black/White Player
+	 * If Computer is chosen, difficulty has to be chosen.
 	 */
-	protected String chooseAI() {
-		Scanner in = new Scanner(System.in);
-		System.out.println ( "Choose a difficulty for the Computer");
-		System.out.println ( "Dumb(D) or Smart(S) or Manual Depth(1-5)?" );
-		String input = null;
-		Integer depth = 0;
-		do {
-			input = in.nextLine();
-			if ( input.length() == 1 ) {
-				try {
-					depth = Integer.parseInt ( input );
-					if ( depth < 1 || depth > 5 )
-						depth = 0;
-				}catch ( NumberFormatException e ) {
-					input = input.toUpperCase();
-				}
+	protected void choosePlayers () {
+		String[] PlayerString = { "Black Player", "White Player" };
+		int playerNumber = 0;
+		while (playerNumber < 2) {
+			System.out.println ( "Is the " + PlayerString[playerNumber] + " Human(H) or Computer(C)?");
+			String input = getStringInput();
+			if ( input.equals("h") || input.equals("human") ) {
+				Player[playerNumber] = "H";
+				++playerNumber;
 			}
-		}while ( !input.equals("D") && !input.equals("S") && depth == 0 );
-		
-		return input;
+			else if ( input.equals("c") || input.equals("computer") ) {
+				Player[playerNumber] = "C";
+				chooseAI(playerNumber);
+				++playerNumber;
+			}	
+			else
+				System.out.println ( "Invalid Input!!!" ); 
+		}
+	}
+	
+	/**
+	 * Choose difficulty of AI by depth level
+	 * Dumb is 1 or Smart is 2
+	 * @param playerNumber
+	 * 	Player number of AI
+	 */
+	protected void chooseAI( int playerNumber ) {
+		System.out.println ( "Choose a difficulty for the Computer");
+		System.out.println ( "Dumb(D) or Smart(S)?" );
+		while (true) {
+			String input = getStringInput();
+			if ( input.equals("d") || input.equals("dumb") ) {
+				Computer[playerNumber] = new AIPlayer(1);
+				break;
+			}
+			else if ( input.equals("s") || input.equals("smart") ) {
+				Computer[playerNumber] = new AIPlayer(2);
+				break;
+			}					
+			else
+				System.out.println ( "Invalid Input!!!" ); 
+		}
 	}
 	
 	/**
 	 * Run Game
 	 */
-	protected void runGame (  ) {
-		mainMenu();
-		int round = 1;
-		int[] Turn = new int[2];
-		Turn[0] = Turn[1] = 1;
-	
-		
+	protected void runGame (  ) {	
 		while ( !boardState.gameOver() ) {
 			Move moveGen = boardState.getMoveGen();
 			PlayerTile currPlayer = boardState.getCurrentPlayer();
-			
-			System.out.println("########## Round " + round + " ##########");
+
+			if ( currPlayer.getPlayerNum() == 1 )
+				System.out.println("########## Round " + round + " ##########");
 			Display.DisplayBoard ( boardState );
 			System.out.println ( currPlayer.toString() + " #" + Turn[currPlayer.getPlayerNum()-1] );
 			System.out.println ( "Walls Left: " + currPlayer.getWallsLeft() );
 			System.out.println ( "Thinking of move..." );
-			Tile bestMove = null;
+			Tile bestMove = null;			
 			if ( Player[currPlayer.getPlayerNum()-1].equals("C") ) {
 				bestMove = Computer[currPlayer.getPlayerNum()-1].getBestMove(boardState);
 				System.out.println( "Move: " + bestMove.toString() );
 			}
+			else {	
+				String input = playerInput ( moveGen );
+				if ( input.equals("quit") )
+					return;
+				else if ( input.equals("end") )
+					break;
+				else if ( input.equals("undo") ) {
+					undoMove(moveGen);
+					continue;	
+				}
+				else
+					bestMove = moveGen.moveParser(input);
+			}
+			if ( bestMove instanceof WallTile )
+				moveList.push( new WallTile( bestMove ) );
 			else
-				bestMove = playerInput ( moveGen );
+				moveList.push( new Tile ( currPlayer ) );
 			moveGen.applyMove ( currPlayer, bestMove );
 			
 			++Turn[currPlayer.getPlayerNum()-1];
@@ -150,24 +348,29 @@ public class Game {
 	/**
 	 * Reset or Quit Game prompt
 	 */
-	protected void ResetQuitGame () {
-		Scanner in = new Scanner(System.in);
-		String input = null;
-		
-		System.out.print ( "Reset Game(R)? or Quit Game(Q)?" );
-		do {
-			input = in.nextLine();
-			input = input.toUpperCase();
-			if ( input.equals("R") )
-				play();
-			else if ( input.equals("Q") )
+	protected void ResetQuitGame () {		
+		System.out.print ( "Return to (M)enu, (R)eset Game or (Q)uit Game?" );
+		while (true) {
+			String input = getStringInput();
+			if ( input.equals("m") || input.equals("menu") ) {
+				mainMenu();
+				break;
+			}
+			else if ( input.equals("r") || input.equals("reset") ) {
+				resetGame();
+				break;
+			}
+			else if ( input.equals("q") || input.equals("quit") ) {
 				System.out.println ( "Thanks for playing");
-				
-		}while ( !input.equals("Q") && !input.equals("R") );
+				break;
+			}					
+			else
+				System.out.println ( "Invalid Input!!!" ); 
+		}
 	}
 	
 	/**
-	 * Test Computer vs Computer (NegaMax)
+	 * Test Computer vs Computer
 	 * for JUnit Tests (only display winner and final board state)
 	 * @param blackDifficulty
 	 * 	Black computer difficulty
@@ -188,34 +391,7 @@ public class Game {
 			bestMove = Computer[currPlayer.getPlayerNum()-1].getBestMove(boardState);
 			moveGen.applyMove ( currPlayer, bestMove );
 			boardState.switchCurrentPlayer();
-		}
-		
-		Display.DisplayBoard(boardState);
-		System.out.println( boardState.getWinner() + " has won the game!!!");
-	}
-
-	/**
-	 * Test Computer vs Computer (AlphaBeta)
-	 * for JUnit Tests (only display winner and final board state)
-	 * @param blackDifficulty
-	 * 	Black computer difficulty
-	 * @param whiteDifficulty
-	 * 	White computer difficulty
-	 */
-	public void testAI2 ( Integer blackDifficulty, Integer whiteDifficulty ) {
-		Computer = new AIPlayer[2];
-		Computer[0] = new AIPlayer (blackDifficulty); 
-		Computer[1] = new AIPlayer (whiteDifficulty); 
-		boardState = new Board();	
-		
-		while ( !boardState.gameOver() ) {
-			Move moveGen = boardState.getMoveGen();
-			PlayerTile currPlayer = boardState.getCurrentPlayer();
-			
-			Tile bestMove = null;
-			bestMove = Computer[currPlayer.getPlayerNum()-1].getBestMove2(boardState);
-			moveGen.applyMove ( currPlayer, bestMove );
-			boardState.switchCurrentPlayer();
+			//Display.DisplayBoard(boardState);
 		}
 		
 		Display.DisplayBoard(boardState);
@@ -226,12 +402,6 @@ public class Game {
 	 * Play Quoridor main function where Player, Computer and Board are initialised
 	 */
 	public void play () {
-		Player = new String[2];
-		Player[0] = Player[1] = "H";
-		Computer = new AIPlayer[2];
-		Computer[0] = Computer[1] = null;
-		boardState = new Board();
-		
-		runGame();
+		mainMenu();
 	}
 }

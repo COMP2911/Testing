@@ -12,14 +12,14 @@ import java.util.PriorityQueue;
  *
  */
 public class AStarPathfinding {
-	private ArrayList<AStarNode> closedNodes;
-	private Queue<AStarNode> openNodes;
-	
 	/**
-	 * 
+	 * Closed nodes for A* pathfinding to prevent re-visiting of nodes
 	 */
-	public AStarPathfinding () {
-	}
+	private ArrayList<AStarNode> closedNodes;
+	/**
+	 * Open nodes for A* pathfinding to visit accordingly to the cost of nodes
+	 */
+	private Queue<AStarNode> openNodes;
 	
 	/**
 	 * Checks if there is a path to goal
