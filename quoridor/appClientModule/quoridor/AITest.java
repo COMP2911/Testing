@@ -5,6 +5,11 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
+/**
+ * JUnit Test case for AI.
+ * To test the different difficulties of the AI
+ *
+ */
 public class AITest {
 	Game game;
 	@Before

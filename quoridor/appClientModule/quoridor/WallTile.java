@@ -1,9 +1,13 @@
 package quoridor;
 
 
+/**
+ * Wall tile consists of top and right wall flags
+ *
+ */
 public class WallTile extends Tile {
-	private boolean horizontal;
-	private boolean vertical;
+	private boolean horizontal;	// Top Wall
+	private boolean vertical;	// Right Wall
 	
 	/**
 	 * Constructor to set position of tile and orientation of tile

@@ -3,6 +3,10 @@ package quoridor;
 import java.util.Map;
 import java.util.Map.Entry;
 
+/**
+ * Has the max row and max column of the board
+ *
+ */
 public class Globals {
 	public static final Integer MAX_ROW = 9;
 	public static final Integer MAX_COL = 9;

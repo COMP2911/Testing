@@ -2,6 +2,9 @@ package quoridor;
 
 import java.util.ArrayList;
 
+/**
+ * AI player class has MinMax algorithm and handles AI movement
+ */
 public class AIPlayer {
 	private Integer minMaxDepth;
 	private Tile bestMove;

@@ -2,6 +2,10 @@ package quoridor;
 
 import java.util.ArrayList;
 
+/**
+ * Generate and Validate player moves
+ *
+ */
 public class PlayerMove extends AbstractMove {
 	
 	/**

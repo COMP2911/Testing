@@ -2,6 +2,10 @@ package quoridor;
 
 import java.util.ArrayList;
 
+/**
+ * Move interface for wall and player movements
+ *
+ */
 public interface Move {
 	/**
 	 * Generate all possible moves and stores in ArrayList of moves

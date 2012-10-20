@@ -2,6 +2,9 @@ package quoridor;
 
 import java.util.ArrayList;
 
+/**
+ * Handles wall and player movements
+ */
 public class AllMoves extends AbstractMove {
 	
 	private Move pMoveGen;

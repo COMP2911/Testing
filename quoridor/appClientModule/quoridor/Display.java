@@ -1,6 +1,10 @@
 package quoridor;
 
 
+/**
+ * Display board in ASCII
+ *
+ */
 public class Display {
 	public Display(){}
 	

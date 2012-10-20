@@ -1,5 +1,8 @@
 package quoridor;
 
+/**
+ * Node with G & F costs and parentPosition for A* Pathfinding
+ */
 public class AStarNode extends Tile implements Comparable<AStarNode> {
 	private int gCost;
 	private int fCost;

@@ -1,5 +1,10 @@
 package quoridor;
 
+/**
+ * Tile of board consists of column and row.
+ * Checking methods of wall blocking and in board.
+ *
+ */
 public class Tile {
 	protected int col;	// x
 	protected int row;	// y

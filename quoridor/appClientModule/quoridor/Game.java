@@ -2,6 +2,10 @@ package quoridor;
 
 import java.util.Scanner;
 
+/**
+ * Create different type of games such as Human-Human, Computer-Computer, Human-Computer and no display game for testing 
+ *
+ */
 public class Game {
 	private String[] Player;
 	private AIPlayer[] Computer;

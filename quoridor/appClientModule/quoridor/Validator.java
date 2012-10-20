@@ -3,6 +3,10 @@ package quoridor;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Validator class provided by LIC to test a given list of moves
+ *
+ */
 public class Validator {
 	Board boardState;
 	// TODO complete this class using your project code

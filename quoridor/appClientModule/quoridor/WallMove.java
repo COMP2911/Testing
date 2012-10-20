@@ -2,12 +2,18 @@ package quoridor;
 
 import java.util.ArrayList;
 
+/**
+ * Generate and Validate wall moves
+ *
+ */
 public class WallMove extends AbstractMove {	
 
 	private AStarPathfinding AStar;
 	
 	/**
+	 * Constructor to initialise A* pathfinding for wall move generation and current board state
 	 * @param boardState
+	 * 	 Current board state
 	 */
 	public WallMove ( Board boardState ) {
 		super (boardState);

@@ -1,6 +1,11 @@
 package quoridor;
 
 
+/**
+ * Board class where both players and walls are stored.
+ * Includes tracking of current player, game over and winner of game.
+ *
+ */
 public class Board {
 	private final int bpX = 4;
 	private final int bpY = 8;

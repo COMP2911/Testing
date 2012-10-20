@@ -9,6 +9,12 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 
+/**
+ * JUnit Test Case to test for different rules of Quoridor.
+ * Provided by LIC.
+ * @author John Potter
+ *
+ */
 public class ProvidedTests
 {
     

@@ -1,5 +1,9 @@
 package quoridor;
 
+/**
+ * Player tile consists of player number, wall count of player and goal row of player
+ *
+ */
 public class PlayerTile extends Tile {
 	private int playerNum;
 	private int wallCount;

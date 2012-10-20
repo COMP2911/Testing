@@ -6,6 +6,11 @@ import java.util.ArrayList;
 import java.util.Queue;
 import java.util.PriorityQueue;
 
+/**
+ * A* Pathfinding gets shortest path in either number of moves or moves.
+ * Includes finding a valid path.
+ *
+ */
 public class AStarPathfinding {
 	private ArrayList<AStarNode> closedNodes;
 	private Queue<AStarNode> openNodes;
