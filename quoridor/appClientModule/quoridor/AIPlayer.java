@@ -32,6 +32,15 @@ public class AIPlayer {
 	}
 	
 	/**
+	 * Get depth of AI
+	 * @return
+	 * 	Depth of AI
+	 */
+	public Integer getDepth () {
+		return minMaxDepth;
+	}
+	
+	/**
 	 * MinMax algorithm with alpha beta pruning
 	 * @param depth
 	 * 	Current depth of the MinMax

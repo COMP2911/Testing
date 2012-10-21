@@ -9,18 +9,44 @@ import java.util.Scanner;
  *
  */
 public class Game {
+	/**
+	 * To state whether player is human/computer
+	 */
 	private String[] Player;
+	/**
+	 * To initialise the AI depending on depth given
+	 */
 	private AIPlayer[] Computer;
+	/**
+	 * Current board state
+	 */
 	private Board boardState;
-	private LinkedList<Tile> moveList;
-	int round;
-	int[] Turn;
+	/**
+	 * Undo move list
+	 */
+	private LinkedList<Tile> undoMoveList;
+	/**
+	 * Redo move list
+	 */
+	private LinkedList<Tile> redoMoveList;
+	/**
+	 * Round of game
+	 */
+	private int round;
+	/**
+	 * Turn of each player
+	 */
+	private int[] Turn;
 	
+	/**
+	 * Constructor to initialise the arrays and linkedlists
+	 */
 	public Game () {
 		Player = new String[2];
 		Computer = new AIPlayer[2];
 		Turn = new int[2];
-		moveList = new LinkedList<Tile>();
+		undoMoveList = new LinkedList<Tile>();
+		redoMoveList = new LinkedList<Tile>();
 	}
 	/**
 	 * Get string input from bash
@@ -42,6 +68,9 @@ public class Game {
 		return scan.nextInt();
 	}
 	
+	/**
+	 * Main menu of game
+	 */
 	protected void mainMenu () {
 		System.out.println ( "Welcome to Quoridor 1.0" );
 		System.out.println ( "Choose the following game modes:" );
@@ -81,40 +110,50 @@ public class Game {
 	 * Loads game;
 	 */
 	protected boolean loadGame() {
-		moveList.clear();
+		undoMoveList.clear();
+		redoMoveList.clear();
 		boardState = new Board();
 		
 		try{
-			// Create file 
+		// Create file 
 			FileReader fstream = new FileReader("game.txt");
 			BufferedReader in = new BufferedReader(fstream);
 			String[] data;
-			// Human/Computer/CurrentPlayer
+		// Human/Computer/CurrentPlayer
 			data  = in.readLine().split(" ");
 			Player[0] = data[0];			Player[1] = data[1];
+			if ( Player[0].equals("C") )
+				Computer[0] = new AIPlayer ( Integer.parseInt(data[3]) );
+			else if ( Player[1].equals("C") )
+				Computer[1] = new AIPlayer ( Integer.parseInt(data[3]) );
 			if ( Integer.parseInt(data[2]) == 2 )
 				boardState.switchCurrentPlayer();
-			// Turn[2]/Round
+		// Turn[2]/Round
 			data  = in.readLine().split(" ");
 			Turn[0] = Integer.parseInt(data[0]);
 			Turn[1] = Integer.parseInt(data[1]);
 			round = Integer.parseInt(data[2]);
-			// Move List
+		// Undo Move List
 			Move moveGen = boardState.getMoveGen();
 			for ( String move : in.readLine().split(" ") ) {
 				Tile moveTile = moveGen.moveParser(move);
-				moveList.add(moveTile);
+				undoMoveList.add(moveTile);
 				moveGen.applyMove(boardState.getCurrentPlayer(), moveTile);
 			}
-			// Player 1 & 2 position/Player 1 & 2 wall count
+		// Redo Move List
+			for ( String move : in.readLine().split(" ") ) {
+				Tile moveTile = moveGen.moveParser(move);
+				redoMoveList.add(moveTile);
+			}
+		// Player 1 & 2 position/Player 1 & 2 wall count
 			data  = in.readLine().split(" ");
 			moveGen.applyMove( boardState.getBlackPlayer(), moveGen.moveParser(data[0]) );
 			moveGen.applyMove( boardState.getWhitePlayer(), moveGen.moveParser(data[1]) );
 			boardState.getBlackPlayer().setWallsLeft( Integer.parseInt(data[2]) );
 			boardState.getWhitePlayer().setWallsLeft( Integer.parseInt(data[3]) );
-			
+		//Close the input stream
 			in.close();
-		}catch (IOException e){//Catch exception if any
+		}catch (Exception e){//Catch exception if any
 			System.err.println("No file found: " + e.getMessage());
 			return false;
 		}
@@ -128,31 +167,43 @@ public class Game {
 	 */
 	protected void saveGame() {
 		try{
-			// Create file 
+		// Create file 
 			FileWriter fstream = new FileWriter("game.txt");
 			BufferedWriter out = new BufferedWriter(fstream);
-			// Human/Computer/CurrentPlayer
+		// Human/Computer/CurrentPlayer
 			out.write( Player[0] + " " + Player[1] + " " + boardState.getCurrentPlayer().getPlayerNum() );
+			if ( Player[0].equals("C") )	out.write( " " + Computer[0].getDepth() );
+			else if ( Player[1].equals("C") )	out.write( " " + Computer[1].getDepth() );
 			out.newLine();
-			// Turn[2]/Round
+		// Turn[2]/Round
 			out.write( Turn[0] + " " + Turn[1] + " " + round );
 			out.newLine();
-			// Move List
+		// Undo Move List
 			StringBuilder sb = new StringBuilder();
-			for ( Tile move : moveList ) {
+			for ( Tile move : undoMoveList ) {
 				sb.append(move.toString() + " ");
 			}
-			sb.deleteCharAt(sb.length()-1);
+			if (sb.length() > 1)
+				sb.deleteCharAt(sb.length()-1);
 			out.write(sb.toString());
 			out.newLine();
-			// Player 1 & 2 position/Player 1 & 2 wall count
+		// Redo Move List
+			sb = new StringBuilder();
+			for ( Tile move : redoMoveList ) {
+				sb.append(move.toString() + " ");
+			}
+			if (sb.length() > 1)
+				sb.deleteCharAt(sb.length()-1);
+			out.write(sb.toString());
+			out.newLine();
+		// Player 1 & 2 position/Player 1 & 2 wall count
 			out.write( (new Tile(boardState.getBlackPlayer())).toString() + " " + (new Tile(boardState.getWhitePlayer())).toString() + " " + 
 						boardState.getBlackPlayer().getWallsLeft() + " " + boardState.getWhitePlayer().getWallsLeft() );
 			out.newLine();
-			//Close the output stream
+		//Close the output stream
 			out.close();
 			System.out.println ( "Game saved" );
-		}catch (Exception e){//Catch exception if any
+		}catch (IOException e){//Catch exception if any
 			System.err.println("Error: " + e.getMessage());
 		}
 	}
@@ -169,7 +220,8 @@ public class Game {
 	 * Reset game
 	 */
 	protected void resetGame () {
-		moveList.clear();
+		undoMoveList.clear();
+		redoMoveList.clear();
 		boardState = new Board();
 		//Computer[0] = Computer[1] = null;
 		round = 1;
@@ -180,32 +232,61 @@ public class Game {
 	/**
 	 * Undo move
 	 * @param moveGen
-	 * 	Board move generator
+	 * 	Move generator
 	 */
 	protected void undoMove ( Move moveGen ) {
 		PlayerTile currPlayer = boardState.getCurrentPlayer();
 		PlayerTile otherPlayer = boardState.getOtherPlayer();
 		
-	// Human-Human - undo other player's move
-		moveGen.undoMove ( otherPlayer, moveList.pop() );
-		--Turn[otherPlayer.getPlayerNum()-1];
-		if ( currPlayer.getPlayerNum() == 1 )
-			--round;
-	// Human-Computer - if it's computer 
-		if ( Player[otherPlayer.getPlayerNum()-1].equals("C") ) {
-			if ( currPlayer.getPlayerNum() == 2  && round == 1 ) {
-				boardState.switchCurrentPlayer();
-				return;
-			}
-		// Undo current player's move
-			moveGen.undoMove ( currPlayer, moveList.pop() );		
-			--Turn[currPlayer.getPlayerNum()-1];
-			if ( currPlayer.getPlayerNum() == 2 )
-				--round;
-		}
-		else {
-			boardState.switchCurrentPlayer();
-		}
+	// Undo other player's move
+		Tile undoMove = undoMoveList.pop();
+		if ( undoMove instanceof WallTile )
+			redoMoveList.push ( undoMove );
+		else
+			redoMoveList.push ( new Tile ( otherPlayer ) );
+		moveGen.undoMove ( otherPlayer, undoMove );
+		
+	// Undo current player's move
+		undoMove = undoMoveList.pop();
+		if ( undoMove instanceof WallTile )
+			redoMoveList.push( undoMove );
+		else
+			redoMoveList.push( new Tile ( currPlayer ) );
+		moveGen.undoMove ( currPlayer, undoMove );	
+		
+		--Turn[0];	
+		--Turn[1];
+		--round;
+	}
+	
+	/**
+	 * Redo move
+	 * @param moveGen
+	 * 	Move generator
+	 */
+	protected void redoMove ( Move moveGen ) {
+		PlayerTile currPlayer = boardState.getCurrentPlayer();
+		PlayerTile otherPlayer = boardState.getOtherPlayer();
+		
+	// Redo current player's move
+		Tile redoMove = redoMoveList.pop();
+		if ( redoMove instanceof WallTile )
+			undoMoveList.push( redoMove );
+		else
+			undoMoveList.push( new Tile ( currPlayer ) );
+		moveGen.applyMove ( currPlayer, redoMove );
+		
+	// Redo other player's move
+		redoMove = redoMoveList.pop();
+		if ( redoMove instanceof WallTile )
+			undoMoveList.push( redoMove );
+		else
+			undoMoveList.push( new Tile ( otherPlayer ) );
+		moveGen.applyMove ( otherPlayer, redoMove );	
+		
+		++Turn[0];	
+		++Turn[1];
+		++round;
 	}
 	
 	
@@ -217,7 +298,7 @@ public class Game {
 	 * 	Player input
 	 */
 	protected String playerInput ( Move moveGen ) {
-		System.out.println ( "Commands: <col><row>, <col><row><h/v>, (Q)uit, (U)ndo, (E)nd, (S)ave" );
+		System.out.println ( "Commands: <col><row>, <col><row><h/v>, (Q)uit, (U)ndo, (R)edo, (E)nd, (S)ave" );
 		System.out.print ( "Input Move: " );
 		while (true) {
 			String input = getStringInput();
@@ -227,8 +308,10 @@ public class Game {
 				return "end";
 			else if ( input.equals("save") || input.equals("s") )
 				saveGame();
-			else if ( (input.equals("undo") || input.equals("u")) && !moveList.isEmpty() )
+			else if ( (input.equals("undo") || input.equals("u")) && undoMoveList.size() >= 2 )
 				return "undo";
+			else if ( (input.equals("redo") || input.equals("r")) && redoMoveList.size() >= 2 )
+				return "redo";
 			else {
 				Tile bestMove = moveGen.moveParser( input );
 				if ( bestMove != null ) {				
@@ -314,21 +397,29 @@ public class Game {
 			}
 			else {	
 				String input = playerInput ( moveGen );
-				if ( input.equals("quit") )
+				if ( input.equals("quit") ) {
+					System.out.println ( "Thanks for playing");
 					return;
+				}
 				else if ( input.equals("end") )
 					break;
 				else if ( input.equals("undo") ) {
 					undoMove(moveGen);
 					continue;	
 				}
-				else
+				else if ( input.equals("redo") ) {
+					redoMove(moveGen);
+					continue;	
+				}
+				else {
 					bestMove = moveGen.moveParser(input);
+					redoMoveList.clear();
+				}
 			}
 			if ( bestMove instanceof WallTile )
-				moveList.push( new WallTile( bestMove ) );
+				undoMoveList.push( new WallTile( bestMove ) );
 			else
-				moveList.push( new Tile ( currPlayer ) );
+				undoMoveList.push( new Tile ( currPlayer ) );
 			moveGen.applyMove ( currPlayer, bestMove );
 			
 			++Turn[currPlayer.getPlayerNum()-1];
